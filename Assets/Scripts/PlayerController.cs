@@ -1,4 +1,9 @@
-﻿public class PlayerController : MonoBehaviour
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI; // Required for using Text
+public class PlayerController : MonoBehaviour
 {
 	public float speed = 5f;
 	public int health = 5;
