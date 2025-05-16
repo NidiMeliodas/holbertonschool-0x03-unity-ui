@@ -1,16 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI; // Required for using Text
-
-public class PlayerController : MonoBehaviour
+﻿public class PlayerController : MonoBehaviour
 {
-	public float speed = 5f;       // Controls movement speed in Inspector
-	public int health = 5;         // Starting health
-	private int score = 0;         // Starting score
+	public float speed = 5f;
+	public int health = 5;
+	private int score = 0;
 
-	public Text scoreText;         // UI Text to show score
+	public Text scoreText;   // Link to Score UI
+	public Text healthText;  // Link to Health UI
 
 	private Rigidbody rb;
 
@@ -22,7 +17,8 @@ public class PlayerController : MonoBehaviour
 			Debug.LogError("PlayerController requires a Rigidbody component.");
 		}
 
-		SetScoreText(); // Initialize UI with starting score
+		SetScoreText();  // Initialize score UI
+		SetHealthText(); // Initialize health UI
 	}
 
 	void FixedUpdate()
@@ -39,15 +35,16 @@ public class PlayerController : MonoBehaviour
 		if (other.CompareTag("Pickup"))
 		{
 			score++;
-			SetScoreText(); // Update the UI
-							// Debug.Log("Score: " + score); // Commented out as requested
+			SetScoreText();
+			// Debug.Log("Score: " + score); // Commented out
 			other.gameObject.SetActive(false);
 		}
 
 		if (other.CompareTag("Trap"))
 		{
 			health--;
-			Debug.Log("Health: " + health);
+			SetHealthText();
+			// Debug.Log("Health: " + health); // Commented out
 		}
 
 		if (other.CompareTag("Goal"))
@@ -67,12 +64,20 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
-	// NEW: Updates score UI text
 	void SetScoreText()
 	{
 		if (scoreText != null)
 		{
 			scoreText.text = "Score: " + score.ToString();
+		}
+	}
+
+	// NEW: Update health UI text
+	void SetHealthText()
+	{
+		if (healthText != null)
+		{
+			healthText.text = "Health: " + health.ToString();
 		}
 	}
 }
