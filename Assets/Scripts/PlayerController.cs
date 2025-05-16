@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
+using UnityEngine.UI; // Required for using Text
 
 public class PlayerController : MonoBehaviour
 {
-	public float speed = 5f;      // Controls movement speed in Inspector
-	public int health = 5;        // Starting health
-	private int score = 0;        // Starting score
+	public float speed = 5f;       // Controls movement speed in Inspector
+	public int health = 5;         // Starting health
+	private int score = 0;         // Starting score
+
+	public Text scoreText;         // UI Text to show score
 
 	private Rigidbody rb;
 
@@ -19,39 +21,35 @@ public class PlayerController : MonoBehaviour
 		{
 			Debug.LogError("PlayerController requires a Rigidbody component.");
 		}
+
+		SetScoreText(); // Initialize UI with starting score
 	}
 
 	void FixedUpdate()
 	{
-		// Get movement input
-		float moveHorizontal = Input.GetAxis("Horizontal"); // A/D or Left/Right arrows
-		float moveVertical = Input.GetAxis("Vertical");     // W/S or Up/Down arrows
+		float moveHorizontal = Input.GetAxis("Horizontal");
+		float moveVertical = Input.GetAxis("Vertical");
 
-		// Only move on X and Z (no Y)
 		Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
-
-		// Move the player using physics
 		rb.MovePosition(rb.position + movement * speed * Time.fixedDeltaTime);
 	}
 
 	void OnTriggerEnter(Collider other)
 	{
-		// Pickup logic
 		if (other.CompareTag("Pickup"))
 		{
 			score++;
-			Debug.Log("Score: " + score);
-			other.gameObject.SetActive(false); // or Destroy(other.gameObject);
+			SetScoreText(); // Update the UI
+							// Debug.Log("Score: " + score); // Commented out as requested
+			other.gameObject.SetActive(false);
 		}
 
-		// Trap logic
 		if (other.CompareTag("Trap"))
 		{
 			health--;
 			Debug.Log("Health: " + health);
 		}
 
-		// Goal logic
 		if (other.CompareTag("Goal"))
 		{
 			Debug.Log("You win!");
@@ -63,14 +61,18 @@ public class PlayerController : MonoBehaviour
 		if (health <= 0)
 		{
 			Debug.Log("Game Over!");
-
-			// Reload the current scene
 			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-
-			// Reset values — optional if you're using Start() to initialize them
 			health = 5;
 			score = 0;
 		}
 	}
 
+	// NEW: Updates score UI text
+	void SetScoreText()
+	{
+		if (scoreText != null)
+		{
+			scoreText.text = "Score: " + score.ToString();
+		}
+	}
 }
