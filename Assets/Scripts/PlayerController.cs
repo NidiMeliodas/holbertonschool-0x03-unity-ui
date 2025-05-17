@@ -12,10 +12,11 @@ public class PlayerController : MonoBehaviour
 
 	public Text scoreText;
 	public Text healthText;
-	public Text winLoseText;       // NEW: Reference to WinLoseText UI
-	public Image winLoseBG;        // NEW: Reference to WinLoseBG UI
+	public Text winLoseText;
+	public Image winLoseBG;
 
 	private Rigidbody rb;
+	private bool gameEnded = false; // To prevent repeating end logic
 
 	void Start()
 	{
@@ -28,7 +29,6 @@ public class PlayerController : MonoBehaviour
 		SetScoreText();
 		SetHealthText();
 
-		// Optional: Hide win/lose message at start
 		if (winLoseText != null)
 			winLoseText.text = "";
 
@@ -38,6 +38,8 @@ public class PlayerController : MonoBehaviour
 
 	void FixedUpdate()
 	{
+		if (gameEnded) return; // Stop movement if game has ended
+
 		float moveHorizontal = Input.GetAxis("Horizontal");
 		float moveVertical = Input.GetAxis("Vertical");
 
@@ -47,6 +49,8 @@ public class PlayerController : MonoBehaviour
 
 	void OnTriggerEnter(Collider other)
 	{
+		if (gameEnded) return;
+
 		if (other.CompareTag("Pickup"))
 		{
 			score++;
@@ -65,6 +69,7 @@ public class PlayerController : MonoBehaviour
 		if (other.CompareTag("Goal"))
 		{
 			// Debug.Log("You win!");
+			gameEnded = true;
 
 			if (winLoseText != null)
 			{
@@ -81,12 +86,24 @@ public class PlayerController : MonoBehaviour
 
 	void Update()
 	{
-		if (health <= 0)
+		if (!gameEnded && health <= 0)
 		{
-			Debug.Log("Game Over!");
-			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-			health = 5;
-			score = 0;
+			gameEnded = true;
+
+			// Debug.Log("Game Over!");
+			if (winLoseText != null)
+			{
+				winLoseText.text = "Game Over!";
+				winLoseText.color = Color.white;
+			}
+
+			if (winLoseBG != null)
+			{
+				winLoseBG.color = Color.red;
+			}
+
+			// Optional: Stop movement completely by disabling physics or delaying scene reload
+			// SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // Removed as per new behavior
 		}
 	}
 
