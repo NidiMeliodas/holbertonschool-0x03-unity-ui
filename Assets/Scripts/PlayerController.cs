@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI; // Required for using Text
+using UnityEngine.UI;
+
 public class PlayerController : MonoBehaviour
 {
 	public float speed = 5f;
 	public int health = 5;
 	private int score = 0;
 
-	public Text scoreText;   // Link to Score UI
-	public Text healthText;  // Link to Health UI
+	public Text scoreText;
+	public Text healthText;
+	public Text winLoseText;       // NEW: Reference to WinLoseText UI
+	public Image winLoseBG;        // NEW: Reference to WinLoseBG UI
 
 	private Rigidbody rb;
 
@@ -22,8 +25,15 @@ public class PlayerController : MonoBehaviour
 			Debug.LogError("PlayerController requires a Rigidbody component.");
 		}
 
-		SetScoreText();  // Initialize score UI
-		SetHealthText(); // Initialize health UI
+		SetScoreText();
+		SetHealthText();
+
+		// Optional: Hide win/lose message at start
+		if (winLoseText != null)
+			winLoseText.text = "";
+
+		if (winLoseBG != null)
+			winLoseBG.color = Color.clear;
 	}
 
 	void FixedUpdate()
@@ -41,7 +51,7 @@ public class PlayerController : MonoBehaviour
 		{
 			score++;
 			SetScoreText();
-			// Debug.Log("Score: " + score); // Commented out
+			// Debug.Log("Score: " + score);
 			other.gameObject.SetActive(false);
 		}
 
@@ -49,12 +59,23 @@ public class PlayerController : MonoBehaviour
 		{
 			health--;
 			SetHealthText();
-			// Debug.Log("Health: " + health); // Commented out
+			// Debug.Log("Health: " + health);
 		}
 
 		if (other.CompareTag("Goal"))
 		{
-			Debug.Log("You win!");
+			// Debug.Log("You win!"); // Commented out as requested
+
+			if (winLoseText != null)
+			{
+				winLoseText.text = "You Win!";
+				winLoseText.color = Color.black;
+			}
+
+			if (winLoseBG != null)
+			{
+				winLoseBG.color = Color.green;
+			}
 		}
 	}
 
@@ -77,7 +98,6 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
-	// NEW: Update health UI text
 	void SetHealthText()
 	{
 		if (healthText != null)
