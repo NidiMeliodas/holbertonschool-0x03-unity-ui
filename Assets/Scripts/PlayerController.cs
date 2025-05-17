@@ -16,7 +16,7 @@ public class PlayerController : MonoBehaviour
 	public Image winLoseBG;
 
 	private Rigidbody rb;
-	private bool gameEnded = false; // To prevent repeating end logic
+	private bool gameEnded = false;
 
 	void Start()
 	{
@@ -38,7 +38,7 @@ public class PlayerController : MonoBehaviour
 
 	void FixedUpdate()
 	{
-		if (gameEnded) return; // Stop movement if game has ended
+		if (gameEnded) return;
 
 		float moveHorizontal = Input.GetAxis("Horizontal");
 		float moveVertical = Input.GetAxis("Vertical");
@@ -68,7 +68,6 @@ public class PlayerController : MonoBehaviour
 
 		if (other.CompareTag("Goal"))
 		{
-			// Debug.Log("You win!");
 			gameEnded = true;
 
 			if (winLoseText != null)
@@ -81,6 +80,8 @@ public class PlayerController : MonoBehaviour
 			{
 				winLoseBG.color = Color.green;
 			}
+
+			StartCoroutine(LoadScene(3)); // 👈 Restart the game after 3 seconds
 		}
 	}
 
@@ -102,8 +103,7 @@ public class PlayerController : MonoBehaviour
 				winLoseBG.color = Color.red;
 			}
 
-			// Optional: Stop movement completely by disabling physics or delaying scene reload
-			// SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // Removed as per new behavior
+			StartCoroutine(LoadScene(3)); // Wait 3 seconds then reload
 		}
 	}
 
@@ -121,5 +121,12 @@ public class PlayerController : MonoBehaviour
 		{
 			healthText.text = "Health: " + health.ToString();
 		}
+	}
+
+	// ✅ Coroutine to reload scene after delay
+	IEnumerator LoadScene(float seconds)
+	{
+		yield return new WaitForSeconds(seconds);
+		SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 	}
 }
