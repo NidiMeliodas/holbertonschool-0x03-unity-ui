@@ -64,7 +64,7 @@ public class PlayerController : MonoBehaviour
 
 		if (other.CompareTag("Goal"))
 		{
-			// Debug.Log("You win!"); // Commented out as requested
+			// Debug.Log("You win!");
 
 			if (winLoseText != null)
 			{
