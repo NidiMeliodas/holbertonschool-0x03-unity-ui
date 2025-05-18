@@ -87,25 +87,29 @@ public class PlayerController : MonoBehaviour
 
 	void Update()
 	{
-		if (!gameEnded && health <= 0)
+		// Reload the scene if health is 0
+		if (health <= 0 && !gameEnded)
 		{
 			gameEnded = true;
-
-			// Debug.Log("Game Over!");
 			if (winLoseText != null)
 			{
 				winLoseText.text = "Game Over!";
 				winLoseText.color = Color.white;
 			}
-
 			if (winLoseBG != null)
 			{
 				winLoseBG.color = Color.red;
 			}
+			StartCoroutine(LoadScene(3));
+		}
 
-			StartCoroutine(LoadScene(3)); // Wait 3 seconds then reload
+		// ✅ ESC key to go back to Main Menu
+		if (Input.GetKeyDown(KeyCode.Escape))
+		{
+			SceneManager.LoadScene("menu"); // Replace with your actual menu scene name
 		}
 	}
+
 
 	void SetScoreText()
 	{
